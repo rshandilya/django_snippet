@@ -86,3 +86,39 @@ from . import views
 urlpatterns = [
     path('blog/<int:year>/', views.year_archive, {'foo': 'bar'}),
 ]
+
+## PASSING EXTRA OPTION TO INCLUDE  ####
+# main.py
+from django.urls import include, path
+
+urlpatterns = [
+    path('blog/', include('inner'), {'blog_id': 3}),
+]
+
+# inner.py
+from django.urls import path
+from mysite import views
+
+urlpatterns = [
+    path('archive/', views.archive),
+    path('about/', views.about),
+]
+
+#### SET 2 #####
+# main.py
+from django.urls import include, path
+from mysite import views
+
+urlpatterns = [
+    path('blog/', include('inner')),
+]
+
+# inner.py
+from django.urls import path
+
+urlpatterns = [
+    path('archive/', views.archive, {'blog_id': 3}),
+    path('about/', views.about, {'blog_id': 3}),
+]
+
+
