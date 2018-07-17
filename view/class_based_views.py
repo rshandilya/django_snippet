@@ -145,6 +145,159 @@ class ItemCreation(CreateView):
         # Return class-based view form_invalid to generate form with errors
         return self.form_invalid(form)
 
-    
-    
-  
+      
+###### LISTVIEW ########      
+# views.py
+from django.views.generic.list import ListView
+from .models import Item
+class ItemList(ListView):
+    model = Item
+# urls.py
+from django.conf.urls import url
+from coffeehouse.items import views as items_views
+urlpatterns = [
+    url(r'^$',items_views.ItemList.as_view(),name="index"),
+]    
+
+# templates/items/item_list.html
+  {% regroup object_list by menu as item_menu_list %}
+  {% for menu_section in item_menu_list %}
+   <li>{{ menu_section.grouper }}
+    <ul>
+        {% for item in menu_section.list %}
+                <li>{{item.name|title}}</li>   
+        {% endfor %}
+    </ul>
+    </li>
+{% endfor %}
+
+####### DETAILVIEW ##########
+# views.py
+from django.views.generic. import DetailView
+from .models import Item
+class ItemDetail(DetailView):
+    model = Item
+# urls.py
+from django.conf.urls import url
+from coffeehouse.items import views as items_views
+urlpatterns = [
+    url(r'^(?P<pk>\d+)/$',items_views.ItemDetail.as_view(),name="detail"),
+]
+# templates/items/item_detail.html
+<h4> {{item.name|title}}</h4>
+<p>{{item.description}}</p>
+<p>${{item.price}}</p>
+<p>For {{item.get_size_display}} size: Only {{item.calories}} calories
+{% if item.drink %}
+and {{item.drink.caffeine}} mg of caffeine.</p>
+{% endif %}
+</p>
+
+
+########  LISTVIEW WITH CUSTOM QUERY  #######
+# views.py
+from django.views.generic.list import ListView
+from .models import Item
+class ItemList(ListView):
+    model = Item
+    queryset = Item.objects.filter(menu__id=1)
+    ordering = ['name']
+
+
+######### LIST OF RECORD WITH PAGINATION  ########
+# views.py
+from django.views.generic.list import ListView
+from .models import Item
+class ItemList(ListView):
+    model = Item
+    paginate_by = 5
+# urls.py
+from django.conf.urls import url
+from coffeehouse.items import views as items_views
+urlpatterns = [
+    url(r'^$',items_views.ItemList.as_view(),name="index"),
+    url(r'^page/(?P<page>\d+)/$',items_views.ItemList.as_view(),name="page"),
+]
+# templates/items/item_list.html
+  {% regroup object_list by menu as item_menu_list %}
+{% for menu_section in item_menu_list %}
+   <li>{{ menu_section.grouper }}
+    <ul>
+        {% for item in menu_section.list %}
+        <li>{{item.name|title}}</li>   
+        {% endfor %}
+    </ul>
+    </li>
+{% endfor %}
+ {% if is_paginated %}
+    {{page_obj}}
+ {% endif %}
+
+####### DETAILVIEW WITH SLUGFIELD #######
+# views.py
+from django.views.generic import DetailView
+from .models import Item
+class ItemDetail(DetailView):
+    model = Item
+    slug_field = 'name__iexact'
+# urls.py
+from django.conf.urls import url
+from coffeehouse.items import views as items_views
+urlpatterns = [
+    url(r'^(?P<slug>\w+)/$',items_views.ItemDetail.as_view(),name="detail"),
+]
+
+########## UPDATE VIEW ############
+# views.py
+from django.views.generic import UpdateView
+from .models import Item
+class ItemUpdate(UpdateView):
+    model = Item
+    form_class = ItemForm
+    success_url = reverse_lazy('items:index')
+# urls.py
+from django.conf.urls import url
+from coffeehouse.items import views as items_views
+urlpatterns = [
+     url(r'^edit/(?P<pk>\d+)/$', items_views.ItemUpdate.as_view(), name='edit'),
+]
+# templates/items/item_form.html
+<form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">
+          {% if object == None%}Create{% else %}Update{% endif %}
+        </button>
+</form>
+
+##########  DELETE VIEW ############
+# views.py
+from django.views.generic.edit import DeleteView
+from .models import Item
+class ItemDelete(UpdateView):
+    model = Item
+    success_url = reverse_lazy('items:index')
+# urls.py
+from django.conf.urls import url
+from coffeehouse.items import views as items_views
+urlpatterns = [
+    url(r'^delete/(?P<pk>\d+)/$', items_views.ItemDelete.as_view(), name='delete'), 
+]
+# templates/items/item_confirm_delete.html
+  <form method="post">
+        {% csrf_token %}
+        Do you really want to delete "{{ object }}"?
+        <button class="btn btn-primary" type="submit">Yes, remove it!</button>
+  </form>
+
+
+####### CLASS BASED WITH MIXIN ##########
+# views.py
+from django.views.generic.edit import CreateView
+from django.contrib.messages.views import SuccessMessageMixin
+from .models import Item, ItemForm
+class ItemCreation(SuccessMessageMixin,CreateView):
+    model = Item
+    form_class = ItemForm
+    success_url = reverse_lazy('items:index')
+    success_message = "Item %(name)s created successfully"
