@@ -105,6 +105,24 @@ class ItemCreation(CreateView):
         return self.render_to_response(self.get_context_data(form=form))
 
 
+###### TO ADD FOREIGNKEY IN CREATEVIEW #######
+class CreateArticle(CreateView):
+    model = Article
+
+    def form_valid(self, form):
+        article = form.save(commit=False)
+        article.author = self.request.user
+        #article.save()  # This is redundant, see comments.
+        return super(CreateArticle, self).form_valid(form)
+## method 2
+class CreateArticle(CreateView):
+    model = Article
+
+    def form_valid(self, form):
+        form.instance.author = self.request.user
+        return super(CreateArticle, self).form_valid(form)
+
+###################
 # views.py
 from django.views.generic.edit import CreateView
 from django.shortcuts import render
@@ -303,19 +321,3 @@ class ItemCreation(SuccessMessageMixin,CreateView):
     success_message = "Item %(name)s created successfully"
 
       
-###### TO ADD FOREIGNKEY IN CREATEVIEW #######
-class CreateArticle(CreateView):
-    model = Article
-
-    def form_valid(self, form):
-        article = form.save(commit=False)
-        article.author = self.request.user
-        #article.save()  # This is redundant, see comments.
-        return super(CreateArticle, self).form_valid(form)
-## method 2
-class CreateArticle(CreateView):
-    model = Article
-
-    def form_valid(self, form):
-        form.instance.author = self.request.user
-        return super(CreateArticle, self).form_valid(form)
