@@ -308,6 +308,41 @@ urlpatterns = [
         <button class="btn btn-primary" type="submit">Yes, remove it!</button>
   </form>
 
+####### DELETE VIEW FOR MULTIPLE PARAMETER ########
+class ReportScheduleDeleteView(DeleteView):
+    model = ReportSchedule
+    template_name = "report/report_confirm_delete.html"
+    success_url = lazy(reverse, str)('jsclient-list')
+
+    # Get the parameters passed in the url so they can be used in the 
+    # "report/report_confirm_delete.html"     
+
+    def get_object(self, queryset=None):
+        if queryset is None:
+            queryset = self.get_queryset()
+
+        client = self.kwargs['pk']
+        report = self.kwargs['rpk']
+
+        queryset = ReportSchedule.objects.filter(client_id=client, id=report)
+
+        if not queryset:
+            raise Http404
+
+        context = {'client_id':client, 'report_id':report}
+        return context
+
+    # Override the delete function to delete report Y from client X
+    # Finally redirect back to the client X page with the list of reports
+    def delete(self, request, *args, **kwargs):
+        client = self.kwargs['pk']
+        report = self.kwargs['rpk']
+
+        clientReport = ReportSchedule.objects.filter(client_id=client, id=report)
+        clientReport.delete()
+
+        return HttpResponseRedirect(reverse('report-list', kwargs={'pk': client})
+
 
 ####### CLASS BASED WITH MIXIN ##########
 # views.py
