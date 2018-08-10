@@ -122,3 +122,22 @@ urlpatterns = [
 ]
 
 
+####### reverse ######
+from news import views
+
+path('archive/', views.archive, name='news-archive')
+
+# using the named URL
+reverse('news-archive')
+
+# passing a callable object
+# (This is discouraged because you can't reverse namespaced views this way.)
+from news import views
+reverse(views.archive)
+
+from django.urls import reverse
+
+def myview(request):
+    return HttpResponseRedirect(reverse('arch-summary', args=[1945]))
+
+reverse('admin:app_list', kwargs={'app_label': 'auth'}) 
