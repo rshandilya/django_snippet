@@ -54,3 +54,27 @@ def contact(request):
 """
 
 
+########## Multiple Submit Button #####
+<form action="" method="post">
+{{ form_newsletter }}
+<input type="submit" name="newsletter_sub" value="Subscribe" />
+<input type="submit" name="newsletter_unsub" value="Unsubscribe" />
+</form>
+
+class NewsletterForm(forms.ModelForm):
+    class Meta:
+        model = Newsletter
+        fields = ('email',)
+
+# in the context of a django.forms form
+def clean(self):
+    if 'newsletter_sub' in self.data:
+        # do subscribe
+    elif 'newsletter_unsub' in self.data:
+        # do unsubscribe
+# another approach
+if request.method=='POST' and 'btnform1' in request.POST:
+    do something...
+if request.method=='POST' and 'btnform2' in request.POST:
+    do something...
+
