@@ -55,6 +55,29 @@ class AuthorDelete(DeleteView):
 # CreateView and UpdateView use myapp/author_form.html
 # DeleteView uses myapp/author_confirm_delete.html
 
+####### FOREIGNKEY #######
+from django.contrib.auth.models import User
+from django.db import models
+
+class Author(models.Model):
+    name = models.CharField(max_length=200)
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    # ...
+
+# Views.py    
+from django.views.generic.edit import CreateView
+from myapp.models import Author
+
+class AuthorCreate(CreateView):
+    model = Author
+    fields = ['name']
+
+    def form_valid(self, form):
+        form.instance.created_by = self.request.user
+        return super().form_valid(form)    
+
+
 ############# SNIPPET   ##########
 # views.py
 from django.views.generic.edit import CreateView
