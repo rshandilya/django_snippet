@@ -5,6 +5,27 @@ urlpatterns = [
     path('about/', TemplateView.as_view(template_name="about.html")),
 ]
 
+
+##### TemplateViews
+# views.py
+from django.views.generic import TemplateView
+class AboutIndex(TemplateView):
+      template_name = 'index.html'
+     
+      def get_context_data(self, **kwargs):
+         # **kwargs contains keyword context initialization values (if any)
+         # Call base implementation to get a context
+         context = super(AboutIndex, self).get_context_data(**kwargs)
+         # Add context data to pass to template
+         context['aboutdata'] = 'Custom data'
+         return context
+         
+#urls.py
+from coffeehouse.about.views import AboutIndex
+urlpatterns = [
+    url(r'^about/index/',AboutIndex.as_view(),{'onsale':True}),
+]
+
 #############
 
 # views.py
@@ -21,7 +42,7 @@ from books.views import PublisherList
 urlpatterns = [
     path('publishers/', PublisherList.as_view()),
 ]
-
+# ..templates/books/publisher_list.html
 """   TEMPLATE
 {% extends "base.html" %}
 
@@ -63,5 +84,73 @@ class PublisherBookList(ListView):
     # Add in the publisher
     context['publisher'] = self.publisher
     return context
-    
-    
+
+
+######### LIST OF RECORD WITH PAGINATION  ########
+# views.py
+from django.views.generic.list import ListView
+from .models import Item
+class ItemList(ListView):
+    model = Item
+    paginate_by = 5
+# urls.py
+from django.conf.urls import url
+from coffeehouse.items import views as items_views
+urlpatterns = [
+    url(r'^$',items_views.ItemList.as_view(),name="index"),
+    url(r'^page/(?P<page>\d+)/$',items_views.ItemList.as_view(),name="page"),
+]
+# templates/items/item_list.html
+  {% regroup object_list by menu as item_menu_list %}
+{% for menu_section in item_menu_list %}
+   <li>{{ menu_section.grouper }}
+    <ul>
+        {% for item in menu_section.list %}
+        <li>{{item.name|title}}</li>   
+        {% endfor %}
+    </ul>
+    </li>
+{% endfor %}
+ {% if is_paginated %}
+    {{page_obj}}
+ {% endif %}
+   
+
+####### DETAILVIEW ##########
+# views.py
+from django.views.generic. import DetailView
+from .models import Item
+class ItemDetail(DetailView):
+    model = Item
+# urls.py
+from django.conf.urls import url
+from coffeehouse.items import views as items_views
+urlpatterns = [
+    url(r'^(?P<pk>\d+)/$',items_views.ItemDetail.as_view(),name="detail"),
+]
+# templates/items/item_detail.html
+"""
+<h4> {{item.name|title}}</h4>
+<p>{{item.description}}</p>
+<p>${{item.price}}</p>
+<p>For {{item.get_size_display}} size: Only {{item.calories}} calories
+{% if item.drink %}
+and {{item.drink.caffeine}} mg of caffeine.</p>
+{% endif %}
+</p>
+"""
+
+####### DETAILVIEW WITH SLUGFIELD #######
+# views.py
+from django.views.generic import DetailView
+from .models import Item
+class ItemDetail(DetailView):
+    model = Item
+    slug_field = 'name__iexact'
+# urls.py
+from django.conf.urls import url
+from coffeehouse.items import views as items_views
+urlpatterns = [
+    url(r'^(?P<slug>\w+)/$',items_views.ItemDetail.as_view(),name="detail"),
+]
+  
