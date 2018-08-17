@@ -154,3 +154,16 @@ urlpatterns = [
     url(r'^(?P<slug>\w+)/$',items_views.ItemDetail.as_view(),name="detail"),
 ]
   
+
+#### PERFORMING EXTRA WORK    
+class AuthorDetailView(DetailView):
+
+    queryset = Author.objects.all()
+
+    def get_object(self):
+        obj = super().get_object()
+        # Record the last accessed date
+        obj.last_accessed = timezone.now()
+        obj.save()
+        return obj
+    
