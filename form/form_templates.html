@@ -1,0 +1,35 @@
+<!-- RENDERING FORM MANUALLY -->
+
+{{ form.non_field_errors }}
+<div class="fieldWrapper">
+    {{ form.subject.errors }}
+    <label for="{{ form.subject.id_for_label }}">Email subject:</label>
+    {{ form.subject }}
+</div>
+<div class="fieldWrapper">
+    {{ form.message.errors }}
+    <label for="{{ form.message.id_for_label }}">Your message:</label>
+    {{ form.message }}
+</div>
+<div class="fieldWrapper">
+    {{ form.sender.errors }}
+    <label for="{{ form.sender.id_for_label }}">Your email address:</label>
+    {{ form.sender }}
+</div>
+<div class="fieldWrapper">
+    {{ form.cc_myself.errors }}
+    <label for="{{ form.cc_myself.id_for_label }}">CC yourself?</label>
+    {{ form.cc_myself }}
+</div>
+
+<!-- GENERATING COMPLETE LABEL FIELD -->
+
+<div class="fieldWrapper">
+    {{ form.subject.errors }}
+    {{ form.subject.label_tag }}
+    {{ form.subject }}
+</div>
+
+<!-- RENDERING ERROR MESSAGE -->
+<
+{{ form.non_field_errors }}{{ form.name_of_field.errors }}
