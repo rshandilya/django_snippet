@@ -185,4 +185,17 @@ class ArticleCounterRedirectView(RedirectView):
         article = get_object_or_404(Article, pk=kwargs['pk'])
         article.update_counter()
         return super().get_redirect_url(*args, **kwargs)
-    
+
+#####  REDIRECT FROM URL  ######  
+from django.core.urlresolvers import reverse_lazy
+from django.views.generic import RedirectView
+# ...
+urlpatterns = patterns('',
+    # Redirects to the view named app_dashboard (below)
+    url(r'^$', RedirectView.as_view(url=reverse_lazy('app_dashboard')), name='index'),
+    # Redirects to google.com
+    url(r'^$', RedirectView.as_view(url='http://google.com'), name='index'),
+    # Our destination URL
+    url(r'^dashboard/$', DashboardView.as_view(), name='app_dashboard'),
+    # ...
+)    
