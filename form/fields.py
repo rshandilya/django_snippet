@@ -13,5 +13,7 @@ ValidationError: ['Enter a valid email address.']
 Field.required
 Field.label
 Field.label_suffix
-Field.initial
+Field.initial  Field.help_text, Field.widget, Field.error_messages, Field.validators, 
+Field.localize, Field.disabled
+Field.has_changed()
 
