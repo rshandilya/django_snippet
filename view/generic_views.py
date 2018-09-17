@@ -198,4 +198,4 @@ urlpatterns = patterns('',
     # Our destination URL
     url(r'^dashboard/$', DashboardView.as_view(), name='app_dashboard'),
     # ...
-)    
+)    s
