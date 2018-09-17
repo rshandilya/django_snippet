@@ -198,4 +198,13 @@ urlpatterns = patterns('',
     # Our destination URL
     url(r'^dashboard/$', DashboardView.as_view(), name='app_dashboard'),
     # ...
-)    s
+)    
+########## Redirect in get ######
+
+class DisplayTaskRedirectView(RedirectView):
+
+    def get(self, request, args, **kwargs):
+        task_id = self.kwargs.get('task_id', None)
+        task = Task.objects.get(pk=task_id)
+        self.url = '/todo/%s-%s' % (task.id, task.slug)
+        return super(DisplayTaskRedirectView, self).get(request, args, **kwargs)
