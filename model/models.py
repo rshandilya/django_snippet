@@ -88,7 +88,7 @@ class GalleryManager(models.Manager):
     def get_queryset(self):
         return super(GalleryManager, self).get_queryset().filter(type='g')
 
-------------------------------------------------------
+#------------------------------------------------------
 class MediaAsset(models.Admin):
     type = models.CharField(max_length=5, default='image')
     caption = models.TextField()
@@ -118,6 +118,6 @@ class VideoManager(models.Manager):
     def create(self, **kwargs):
         kwargs.update({'type': 'video'})
         return super(VideoManager, self).create(**kwargs)
-===========================================================    
+#===========================================================    
     
     
