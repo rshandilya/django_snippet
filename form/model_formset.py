@@ -139,5 +139,49 @@ def manage_authors(request):
     {% endfor %}
 </form>
 
+############## INLINEFORMSET #################
+from django.db import models
+
+class Author(models.Model):
+    name = models.CharField(max_length=100)
+
+class Book(models.Model):
+    author = models.ForeignKey(Author, on_delete=models.CASCADE)
+    title = models.CharField(max_length=100)
+    
+>>> from django.forms import inlineformset_factory
+>>> BookFormSet = inlineformset_factory(Author, Book, fields=('title',))
+>>> author = Author.objects.get(name='Mike Royko')
+>>> formset = BookFormSet(instance=author)
+
+##### Overriding methods on an InlineFormSet
+from django.forms import BaseInlineFormSet
+
+class CustomInlineFormSet(BaseInlineFormSet):
+    def clean(self):
+        super().clean()
+        # example custom validation across forms in the formset
+        for form in self.forms:
+            # your custom formset validation
+            ...
+>>> from django.forms import inlineformset_factory
+>>> BookFormSet = inlineformset_factory(Author, Book, fields=('title',),
+...     formset=CustomInlineFormSet)
+>>> author = Author.objects.get(name='Mike Royko')
+>>> formset = BookFormSet(instance=author)
+
+######### IN VIEWS
+def manage_books(request, author_id):
+    author = Author.objects.get(pk=author_id)
+    BookInlineFormSet = inlineformset_factory(Author, Book, fields=('title',))
+    if request.method == "POST":
+        formset = BookInlineFormSet(request.POST, request.FILES, instance=author)
+        if formset.is_valid():
+            formset.save()
+            # Do something. Should generally end with a redirect. For example:
+            return HttpResponseRedirect(author.get_absolute_url())
+    else:
+        formset = BookInlineFormSet(instance=author)
+    return render(request, 'manage_books.html', {'formset': formset})
 
 
