@@ -49,5 +49,95 @@ AuthorFormSet = modelformset_factory(
 ...     Author, fields=('name', 'title', 'birth_date'),
 ...     localized_fields=('birth_date',))
 
+## Model Formset in view ##
+from django.forms import modelformset_factory
+from django.shortcuts import render
+from myapp.models import Author
 
-        
+def manage_authors(request):
+    AuthorFormSet = modelformset_factory(Author, fields=('name', 'title'))
+    if request.method == 'POST':
+        formset = AuthorFormSet(request.POST, request.FILES)
+        if formset.is_valid():
+            formset.save()
+            # do something.
+    else:
+        formset = AuthorFormSet()
+    return render(request, 'manage_authors.html', {'formset': formset})
+
+### overriding clean
+from django.forms import BaseModelFormSet
+
+class MyModelFormSet(BaseModelFormSet):
+    def clean(self):
+        super().clean()
+        # example custom validation across forms in the formset
+        for form in self.forms:
+            # your custom formset validation
+            ...
+
+## Must modify form.instance
+class MyModelFormSet(BaseModelFormSet):
+    def clean(self):
+        super().clean()
+
+        for form in self.forms:
+            name = form.cleaned_data['name'].upper()
+            form.cleaned_data['name'] = name
+            # update the instance value.
+            form.instance.name = name
+
+### Custom Queryset ###
+from django.forms import modelformset_factory
+from django.shortcuts import render
+from myapp.models import Author
+
+def manage_authors(request):
+    AuthorFormSet = modelformset_factory(Author, fields=('name', 'title'))
+    if request.method == "POST":
+        formset = AuthorFormSet(
+            request.POST, request.FILES,
+            queryset=Author.objects.filter(name__startswith='O'),
+        )
+        if formset.is_valid():
+            formset.save()
+            # Do something.
+    else:
+        formset = AuthorFormSet(queryset=Author.objects.filter(name__startswith='O'))
+    return render(request, 'manage_authors.html', {'formset': formset})
+
+## In Templates
+
+<form method="post">
+    {{ formset }}
+</form>
+
+<form method="post">
+    {{ formset.management_form }}
+    {% for form in formset %}
+        {{ form }}
+    {% endfor %}
+</form>
+
+<form method="post">
+    {{ formset.management_form }}
+    {% for form in formset %}
+        {% for field in form %}
+            {{ field.label_tag }} {{ field }}
+        {% endfor %}
+    {% endfor %}
+</form>
+
+<form method="post">
+    {{ formset.management_form }}
+    {% for form in formset %}
+        {{ form.id }}
+        <ul>
+            <li>{{ form.name }}</li>
+            <li>{{ form.age }}</li>
+        </ul>
+    {% endfor %}
+</form>
+
+
+
