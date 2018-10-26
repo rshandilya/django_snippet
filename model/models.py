@@ -1,5 +1,28 @@
 # MODELS SNIPPETS
 
+
+############## FOREIGNKEY DEFINED USING STRING IN ADVANCE ###########
+#products/models.py
+from django.db import models
+
+class AbstractCar(models.Model):
+    manufacturer = models.ForeignKey('Manufacturer', on_delete=models.CASCADE)
+
+    class Meta:
+        abstract = True
+
+# profuction/models.py
+from django.db import models
+from products.models import AbstractCar
+
+class Manufacturer(models.Model):
+    pass
+
+class Car(AbstractCar):
+    pass
+
+
+
 #### MANYTOMANY FIELD #######
 class Person(models.Model):
     name = models.CharField(max_length=128)
@@ -21,7 +44,57 @@ class Membership(models.Model):
     invite_reason = models.CharField(max_length=64)
 
 
+########  RELATED MANAGER ##########
+from django.db import models
 
+### Other side of ForeignKey relations
+class Reporter(models.Model):
+    # ...
+    pass
+
+class Article(models.Model):
+    reporter = models.ForeignKey(Reporter, on_delete=models.CASCADE)
+
+# the methods below will be available on the manager reporter.article_set
+
+## Both side of ManyToManyField relations   
+class Topping(models.Model):
+    # ...
+    pass
+
+class Pizza(models.Model):
+    toppings = models.ManyToManyField(Topping)    
+    
+# the methods below will be available both on topping.pizza_set and on pizza.toppings    
+
+# add(*objs, bulk=True)
+>>> b = Blog.objects.get(id=1)
+>>> e = Entry.objects.get(id=234)
+>>> b.entry_set.add(e) # Associates Entry e with Blog b.
+
+# create(**kwargs)
+>>> b = Blog.objects.get(id=1)
+>>> e = b.entry_set.create(
+...     headline='Hello',
+...     body_text='Hi',
+...     pub_date=datetime.date(2005, 1, 1)
+... )
+# No need to call e.save() at this point -- it's already been saved.
+
+# remove(*objs, bulk=True)
+>>> b = Blog.objects.get(id=1)
+>>> e = Entry.objects.get(id=234)
+>>> b.entry_set.remove(e) # Disassociates Entry e from Blog b.
+
+# clear(bulk=True)
+>>> b = Blog.objects.get(id=1)
+>>> b.entry_set.clear()
+
+# set(objs, bulk=True, clear=False)
+>>> new_list = [obj1, obj2, obj3]
+>>> e.related_set.set(new_list)
+    
+    
 
 
 ##### UNIQUE TOGETHER  #####
