@@ -243,7 +243,7 @@ urlpatterns = [
 # views.py
 from django.views.generic.edit import DeleteView
 from .models import Item
-class ItemDelete(UpdateView):
+class ItemDelete(DeleteView):
     model = Item
     success_url = reverse_lazy('items:index')
 # urls.py
