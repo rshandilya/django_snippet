@@ -88,6 +88,7 @@ class ItemCreation(CreateView):
     model = Item
     form_class = ItemForm
     success_url = reverse_lazy('items:index')
+    
     def get_context_data(self,**kwargs):
         kwargs['special_context_variable'] = 'My special context variable!!!'
         context = super(ItemCreation, self).get_context_data(**kwargs)
@@ -102,6 +103,7 @@ class ItemCreation(CreateView):
     model = Item
     form_class = ItemForm
     success_url = reverse_lazy('items:index')
+    
     def get_initial(self):
         initial_base = super(ItemCreation, self).get_initial()
         initial_base['menu'] = Menu.objects.get(id=1)
@@ -111,11 +113,13 @@ class ItemCreation(CreateView):
 # views.py
 from django.views.generic.edit import CreateView
 from .models import Item, ItemForm, Menu
+
 class ItemCreation(CreateView):
     initial = {'size':'L'}
     model = Item
     form_class = ItemForm
     success_url = reverse_lazy('items:index')
+    
     def get_form(self):
         form = super(ItemCreation, self).get_form()
         initial_base = self.get_initial()
@@ -130,16 +134,20 @@ from django.views.generic.edit import CreateView
 from django.http import HttpResponseRedirect
 from django.contrib import messages
 from .models import Item, ItemForm, Menu
+
 class ItemCreation(CreateView):
     initial = {'size':'L'}
     model = Item
     form_class = ItemForm
     success_url = reverse_lazy('items:index')
+    
     def form_valid(self,form):
         super(ItemCreation,self).form_valid(form)
         # Add action to valid form phase
         messages.success(self.request, 'Item created successfully!')
         return HttpResponseRedirect(self.get_success_url())
+        # return HttpResponseRedirect(self.request.path_info)   # To redirect to same page
+    
     def form_invalid(self,form):
         # Add action to invalid form phase
         return self.render_to_response(self.get_context_data(form=form))
