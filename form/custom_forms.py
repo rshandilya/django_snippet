@@ -1,4 +1,5 @@
-class FillQuizForm(forms.Form): mark = forms.IntegerField()
+class FillQuizForm(forms.Form): 
+	mark = forms.IntegerField()
     negative_mark = forms.DecimalField(min_value=0, decimal_places=2, max_value=1)
 
 	def __init__(self, *args, **kwargs):
