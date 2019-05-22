@@ -39,12 +39,13 @@ class CustomUser(AbstractUser):
 # users/forms.py
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm
+from django.conf import settings
 from .models import CustomUser
 
 class CustomUserCreationForm(UserCreationForm):
 
     class Meta(UserCreationForm.Meta):
-        model = CustomUser
+        model = settings.AUTH_USER_MODEL
         fields = ('username', 'email')
 
 class CustomUserChangeForm(UserChangeForm):
