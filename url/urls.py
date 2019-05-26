@@ -141,3 +141,15 @@ def myview(request):
     return HttpResponseRedirect(reverse('arch-summary', args=[1945]))
 
 reverse('admin:app_list', kwargs={'app_label': 'auth'}) 
+
+
+############### JSON RESPONSE ##########################
+
+from django.http import JsonResponse
+
+def send_json(request):
+
+    data = [{'name': 'Peter', 'email': 'peter@example.org'},
+            {'name': 'Julia', 'email': 'julia@example.org'}]
+
+    return JsonResponse(data, safe=False)
