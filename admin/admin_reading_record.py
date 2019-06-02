@@ -20,6 +20,8 @@ class StoreAdmin(admin.ModelAdmin):
     
 from django.contrib import admin
 from coffeehouse.stores.models import Store
+
 class StoreAdmin(admin.ModelAdmin):
-list_display = ['name','address','city','state']
+    list_display = ['name','address','city','state']
+
 admin.site.register(Store, StoreAdmin)    
