@@ -1,4 +1,5 @@
 
+"""
 {{ form.non_field_errors }}
 <div class="fieldWrapper">
     {{ form.subject.errors }}
@@ -77,7 +78,7 @@
 #  forms with different name in context
 {% include "form_snippet.html" with form=comment_form %}
     
-    
+"""    
 ########### SIMPLEISBETTERTHANCOMPLEX ######################
 
 class ContactForm(forms.Form):
