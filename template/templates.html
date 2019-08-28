@@ -1,3 +1,15 @@
 <!-- TEMPLATES SNIPPET -->
 
 {% load static %} <img src="{% static "images/hi.svg" %}" alt="Hi!" />
+
+<!-- INCLUDE TAG -->
+{% include "foo/bar.html" %}
+{% include template_name %}
+
+{% include "name_snippet.html" %}
+<!-- in name_snippet.html -->
+{{ greeting }}, {{ person|default:"friend" }}!
+
+{% include "name_snippet.html" with person="Jane" greeting="Hello" %}
+
+{% include "name_snippet.html" with greeting="Hi" only %}
