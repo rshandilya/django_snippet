@@ -1,3 +1,28 @@
+<!-- USING LOOP -->
+{% csrf_token %}
+{{ form.non_field_errors }}
+{% for field in form %}
+    <div class="mui-textfield mui-textfield--float-label">
+        {{ field }}{{ field.label_tag }}       
+        {{ field.errors }}        
+        {% if field.help_text %}
+        <p>{{ field.help_text|safe }}</p>
+        {% endif %}
+    </div>
+{% endfor %}
+
+<!-- GENERATING COMPLETE LABEL FIELD -->
+
+<div class="fieldWrapper">
+    {{ form.subject.errors }}
+    {{ form.subject.label_tag }}
+    {{ form.subject }}
+</div>
+
+<!-- RENDERING ERROR MESSAGE -->
+<
+{{ form.non_field_errors }}{{ form.name_of_field.errors }}
+
 <!-- RENDERING FORM MANUALLY -->
 
 {{ form.non_field_errors }}
@@ -22,14 +47,5 @@
     {{ form.cc_myself }}
 </div>
 
-<!-- GENERATING COMPLETE LABEL FIELD -->
 
-<div class="fieldWrapper">
-    {{ form.subject.errors }}
-    {{ form.subject.label_tag }}
-    {{ form.subject }}
-</div>
 
-<!-- RENDERING ERROR MESSAGE -->
-<
-{{ form.non_field_errors }}{{ form.name_of_field.errors }}
