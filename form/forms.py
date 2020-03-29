@@ -26,6 +26,15 @@ def contact(request):
             # process data, insert into DB, generate email
             # Redirect to a new URL
             return HttpResponseRedirect('/about/contact/thankyou')
+        
+######### PROCESSING BOUND AND UNBOUND GET REQUEST #############
+if request.GET.items():
+    form = YourForm(request.GET)
+    if form.is_valid():
+        ...
+
+else:
+    form = YourForm()
         else:
             pass # Not needed
         # is_valid() method created errors dict, so form reference now contains
