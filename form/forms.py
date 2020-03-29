@@ -87,3 +87,12 @@ if request.method=='POST' and 'btnform1' in request.POST:
 if request.method=='POST' and 'btnform2' in request.POST:
     do something...
 
+
+######## PROCESSING BOUND AND UNBOUND GET REQUEST ########
+if request.GET.items():
+    form = YourForm(request.GET)
+    if form.is_valid():
+        ...
+
+else:
+    form = YourForm()
