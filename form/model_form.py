@@ -89,6 +89,19 @@ def post_edit(request, pk):
         form = PostForm(instance=post)
     return render(request, 'blog/post_edit.html', {'form': form})
 
+
+####### CHANGING QUERYSET ########
+# make change in the view
+form.base_fields['alumno_item'].queryset = AlumnoItem.objects.prefetch_related(
+        'alumno',
+        'alumno__estudiante',
+        'alumno__estudiante__profile',
+        'item'
+    )
+# another e.g  in old django
+form  = BikeForm()
+form.fields["made_at"].queryset = Factory.objects.filter(user__factory)
+
 ######### DJANGO DOC  ########
 
 ## Save() methods
