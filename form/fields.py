@@ -17,3 +17,26 @@ Field.initial  Field.help_text, Field.widget, Field.error_messages, Field.valida
 Field.localize, Field.disabled
 Field.has_changed()
 
+
+####  Field value different for creating and editing ####
+
+# Models.py
+class Item(models.Model):
+    sku = models.CharField(max_length=50)
+    description = models.CharField(max_length=200)
+    added_by = models.ForeignKey(User)
+# forms.py
+class ItemForm(ModelForm):
+    def __init__(self, *args, **kwargs):
+        super(ItemForm, self).__init__(*args, **kwargs)
+        instance = getattr(self, 'instance', None)
+        if instance and instance.pk:
+            self.fields['sku'].widget.attrs['readonly'] = True
+            #self.fields['sku'].disabled = True
+
+    def clean_sku(self):
+        instance = getattr(self, 'instance', None)
+        if instance and instance.pk:
+            return instance.sku
+        else:
+            return self.cleaned_data['sku']
