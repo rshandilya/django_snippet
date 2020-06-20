@@ -183,8 +183,16 @@ class ArticleForm(ModelForm):
 >>> form['headline'].value()
 'Initial headline'      # initial args override the instance value
 
+#### Adding extra form field in ModelForm
+class PointForm (forms.ModelForm):
+    temp_id = forms.IntegerField()
 
+    class Meta:
+        model = Point
 
+    def save(self, commit=True):
+        # do something with self.cleaned_data['temp_id']
+        return super(PointForm, self).save(commit=commit)
 
 
 
