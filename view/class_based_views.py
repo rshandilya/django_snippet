@@ -33,6 +33,32 @@ urlpatterns = [
     path('about/', GreetingView.as_view(greeting="G'day")),
 ]
 
+##########################################################
+## General- purpose View class
+# views.py
+from django.views.generic import View
+from django.http import HttpResponse
+from django.shortcuts import render
+
+
+class ContactPage(View):
+	mytemplate = 'contact.html'
+	unsupported = 'Unsupported operation'
+
+	def get(self, request):
+		return render(request, self.mytemplate)
+
+	def post(self, request):
+		return HttpResponse(self.unsupported)
+
+#urls.py
+from coffeehouse.contact.views import ContactPage
+
+urlpatterns = [
+	url(r'^contact/$',ContactPage.as_view()),
+]
+
+
 ######## FORM HANDLING WITH DIFFERENT HTTP METHODS #######
 
 from django.http import HttpResponseRedirect
